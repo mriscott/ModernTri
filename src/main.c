@@ -128,6 +128,10 @@ void long_pulse(){
   vibes_long_pulse();
 }
 
+void short_pulse(){
+  vibes_short_pulse();
+}
+
 void hide_hr() {
   // Show window
   layer_set_hidden(text_layer_get_layer(hr_layer), true);
@@ -139,7 +143,6 @@ void finish_hr() {
  long_pulse();
  hide_hr();
 }
-
 
 // Heart rate mode. Show text and wait for 5 secs
 void prepare_hr() {
@@ -201,9 +204,7 @@ void battery_state_handler(BatteryChargeState c) {
   battery_charging = c.is_charging;
   draw_battery_icon();
 }
-void short_pulse(){
-  vibes_short_pulse();
-}
+
 // If bluetooth is still not connected after 5 sec delay, vibrate. (double vibe was too easily confused with a signle short vibe.  Two short vibes was easier to distinguish from a notification)
 void bt_vibrate(){
   if (!bt_status && !already_vibrated) {
