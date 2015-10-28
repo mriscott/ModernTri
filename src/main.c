@@ -144,6 +144,18 @@ void finish_hr() {
  hide_hr();
 }
 
+// Heart rate mode. Show text and wait for 30 sec.
+void start_hr() {
+  // Show text
+  text_layer_set_text(hr_layer, hr_count_text);
+  layer_set_hidden(text_layer_get_layer(hr_layer), false);
+  long_pulse();
+  // 30 Sec timer then call "finish_hr". Cancels previous timer if ongoing
+  app_timer_cancel(hr_timer);
+  hr_mode=true;
+  hr_timer = app_timer_register(30000, finish_hr, NULL);
+}
+
 // Heart rate mode. Show text and wait for 5 secs
 void prepare_hr() {
   // Show text
@@ -155,18 +167,6 @@ void prepare_hr() {
   app_timer_cancel(hr_ready_timer);
   hr_mode=true;
   hr_ready_timer = app_timer_register(5000, start_hr, NULL);  
-}
-
-// Heart rate mode. Show text and wait for 30 sec.
-void start_hr() {
-  // Show text
-  text_layer_set_text(hr_layer, hr_count_text);
-  layer_set_hidden(text_layer_get_layer(hr_layer), false);
-  long_pulse();
-  // 30 Sec timer then call "finish_hr". Cancels previous timer if ongoing
-  app_timer_cancel(hr_timer);
-  hr_mode=true;
-  hr_timer = app_timer_register(30000, finish_hr, NULL);
 }
 
 
@@ -227,7 +227,7 @@ void bt_connection_handler(bool bt) {
 void tap_handler(AccelAxisType axis, int32_t direction) {
   if(hr_mode) {
     // cancel hr
-    text_layer_set_text(hr_layer, hr_ready_text);
+    text_layer_set_text(hr_layer, hr_cancelled_text);
     app_timer_register(1000, hide_hr, NULL);
 		return;
   }
@@ -261,7 +261,6 @@ void deinit() {
   accel_tap_service_unsubscribe();
 
   // and destroy everything
-  int i=0;
   layer_destroy(hands_layer);
   gpath_destroy(minute_hand);
   gpath_destroy(hour_hand);
