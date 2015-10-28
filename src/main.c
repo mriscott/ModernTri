@@ -230,12 +230,13 @@ void deinit() {
 	accel_tap_service_unsubscribe();
 
 	// and destroy everything
+  int i=0;
 	layer_destroy(hands_layer);
 	gpath_destroy(minute_hand);
 	gpath_destroy(hour_hand);
 	bitmap_layer_destroy(battery_layer);
 	gbitmap_destroy(icon_battery_charging);
-	gbitmap_destroy(icon_battery_10);
+	gbitmap_destroy(icon_battery_100);
 	gbitmap_destroy(icon_battery_90);
 	gbitmap_destroy(icon_battery_80);
 	gbitmap_destroy(icon_battery_70);
@@ -245,7 +246,7 @@ void deinit() {
 	gbitmap_destroy(icon_battery_30);
 	gbitmap_destroy(icon_battery_20);
 	gbitmap_destroy(icon_battery_10);
-	bitmap_layer_destroy(bt_layer);
+  bitmap_layer_destroy(bt_layer); 
 	gbitmap_destroy(icon_bt_connected);
 	gbitmap_destroy(icon_bt_disconnected);
 	text_layer_destroy(hr_layer);
@@ -255,7 +256,9 @@ void deinit() {
 	bitmap_layer_destroy(background_layer);
 	gbitmap_destroy(background_image);
 	layer_destroy(window_layer);
-  	window_destroy(window);
+  // don't destroy window, as this crashes watchface
+  // TODO - is this a memory leak???
+  //window_destroy(window);
 }
 ///
 /// Initial watchface call
