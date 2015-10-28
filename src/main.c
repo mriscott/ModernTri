@@ -23,7 +23,9 @@ static char date_text[] = "13";
 
 // Heartrate text
 static TextLayer *hr_layer;
-static char hr_text[] = "Count Beats";
+static char hr_count_text[] = "Count Beats";
+static char hr_ready_text[] = "Find Pulse";
+static char hr_cancelled_text[] = "Cancelled";
 // Status
 static bool status_showing = false;
 // Bluetooth
@@ -54,6 +56,7 @@ static bool battery_hide = false;
 // Timers
 static AppTimer *display_timer;
 static AppTimer *hr_timer;
+static AppTimer *hr_ready_timer;
 static AppTimer *vibrate_timer;
 ///
 /// Easy set items for version management (and future settings screen)
@@ -129,19 +132,38 @@ void hide_hr() {
   // Show window
   layer_set_hidden(text_layer_get_layer(hr_layer), true);
   app_timer_cancel(hr_timer);
-  long_pulse();
   hr_mode=false;
 }
 
-// Heart rate mode. Show text and wait for 30 sec.
-void show_hr() {
+void finish_hr() {
+ long_pulse();
+ hide_hr();
+}
+
+
+// Heart rate mode. Show text and wait for 5 secs
+void prepare_hr() {
   // Show text
+  text_layer_set_text(hr_layer, hr_ready_text);
+  layer_set_hidden(text_layer_get_layer(hr_layer), false);
+  short_pulse();
+  // 5 Sec timer then call "start_hr".
+  app_timer_cancel(hr_timer);
+  app_timer_cancel(hr_ready_timer);
+  hr_mode=true;
+  hr_ready_timer = app_timer_register(5000, start_hr, NULL);  
+}
+
+// Heart rate mode. Show text and wait for 30 sec.
+void start_hr() {
+  // Show text
+  text_layer_set_text(hr_layer, hr_count_text);
   layer_set_hidden(text_layer_get_layer(hr_layer), false);
   long_pulse();
-  // 30 Sec timer then call "hide_hr". Cancels previous timer if ongoing
+  // 30 Sec timer then call "finish_hr". Cancels previous timer if ongoing
   app_timer_cancel(hr_timer);
   hr_mode=true;
-  hr_timer = app_timer_register(30000, hide_hr, NULL);
+  hr_timer = app_timer_register(30000, finish_hr, NULL);
 }
 
 
@@ -152,7 +174,6 @@ void hide_status() {
   draw_bt_icon();
   layer_set_hidden(text_layer_get_layer(date_layer), hide_date);
   layer_set_hidden(bitmap_layer_get_layer(date_window_layer), hide_date);
-  show_hr();
 }
 // Shows status icons. Call draw of default battery/bluetooth icons (which will show or hide icon based on set logic). Shows date/window.
 void show_status() {
@@ -164,7 +185,7 @@ void show_status() {
   // Show Date Window & Date
   layer_set_hidden(text_layer_get_layer(date_layer), false);
   layer_set_hidden(bitmap_layer_get_layer(date_window_layer), false);
-  // 4 Sec timer then call "hide_status". Cancels previous timer if another show_status is called within the 4000ms
+  // 4 Sec timer then call "hide_status". Cancels previous timer if another show_status is called within the 5000ms
   app_timer_cancel(display_timer);  
   display_timer = app_timer_register(5000, hide_status, NULL);
 }
@@ -199,14 +220,22 @@ void bt_connection_handler(bool bt) {
   if (!bt_status) vibrate_timer = app_timer_register(5000, bt_vibrate, NULL);
   else if (bt_status && already_vibrated) already_vibrated = false;
 }
+
 // Shake/Tap Handler. On shake/tap... call "show_status"
 // also vibrate after 5s then again after 30 for checking pulse
 void tap_handler(AccelAxisType axis, int32_t direction) {
   if(hr_mode) {
-    hide_hr();
-  } else {
-    show_status();
+    // cancel hr
+    text_layer_set_text(hr_layer, hr_ready_text);
+    app_timer_register(1000, hide_hr, NULL);
+		return;
   }
+	if(status_showing) {
+    prepare_hr();
+    return;
+  }
+  show_status();
+  
 }
 // Time Update Handler. Set current time, redraw date (to update when changed not at 2359) and update hands layer
 void update_time(struct tm *t, TimeUnits units_changed) {
@@ -221,6 +250,7 @@ void deinit() {
   // cancel any timers
   app_timer_cancel(display_timer);
   app_timer_cancel(hr_timer);
+  app_timer_cancel(hr_ready_timer);
   app_timer_cancel(vibrate_timer);
 
   // unsubscribe from services
@@ -307,7 +337,7 @@ void init() {
   text_layer_set_text_alignment(hr_layer, GTextAlignmentCenter);
   text_layer_set_background_color(hr_layer, GColorWhite);
   layer_add_child(window_layer, text_layer_get_layer(hr_layer));
-  text_layer_set_text(hr_layer, hr_text);
+  text_layer_set_text(hr_layer, hr_ready_text);
   layer_set_hidden(text_layer_get_layer(date_layer), true);
   hide_hr();
 
@@ -338,13 +368,13 @@ void init() {
   battery_state_handler(battery_state_service_peek());
   
   // Show status screen on init (comment out to have battery and bluetooth status hidden at init)
-  //show_status();
+  show_status();
      
   // Watch hands init
   hour_hand = gpath_create(&HOUR_HAND_POINTS);
-   minute_hand = gpath_create(&MINUTE_HAND_POINTS);
+  minute_hand = gpath_create(&MINUTE_HAND_POINTS);
   gpath_move_to(hour_hand, center);
-   gpath_move_to(minute_hand, center);
+  gpath_move_to(minute_hand, center);
   hands_layer = layer_create(window_bounds);
   layer_add_child(window_layer, hands_layer);
   layer_set_update_proc(hands_layer, &draw_hands);
