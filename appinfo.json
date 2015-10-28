@@ -1,0 +1,114 @@
+{
+    "appKeys": {
+        "dummy": 0
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "JWay5929",
+    "longName": "Modern Tri",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/Icon Bluetooth disconnected.png",
+                "name": "BLUETOOTH_DISCONNECTED",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 30.png",
+                "name": "ICON_BATTERY_30",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 60.png",
+                "name": "ICON_BATTERY_60",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 80.png",
+                "name": "ICON_BATTERY_80",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 40.png",
+                "name": "ICON_BATTERY_40",
+                "type": "png"
+            },
+            {
+                "file": "images/Date Window.png",
+                "name": "IMAGE_DATE_WINDOW",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 20.png",
+                "name": "ICON_BATTERY_20",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 90.png",
+                "name": "ICON_BATTERY_90",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery Charging.png",
+                "name": "ICON_BATTERY_CHARGING",
+                "type": "png"
+            },
+            {
+                "file": "fonts/Roboto-Condensed.ttf",
+                "name": "FONT_ROBOTO_CONDENSED_21",
+                "type": "font"
+            },
+            {
+                "file": "images/bluetooth.png",
+                "name": "BLUETOOTH_CONNECTED",
+                "type": "png"
+            },
+            {
+                "file": "images/modern_logo.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/modern minimal 3 background no badge.png",
+                "name": "IMAGE_BACKGROUND_NOBADGE",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 10.png",
+                "name": "ICON_BATTERY_10",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 50.png",
+                "name": "ICON_BATTERY_50",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 100.png",
+                "name": "ICON_BATTERY_100",
+                "type": "png"
+            },
+            {
+                "file": "images/Icon Battery 70.png",
+                "name": "ICON_BATTERY_70",
+                "type": "png"
+            },
+            {
+                "file": "images/modern_background_new.png",
+                "name": "IMAGE_BACKGROUND_BADGE",
+                "type": "png"
+            }
+        ]
+    },
+    "sdkVersion": "2",
+    "shortName": "Modern Tri",
+    "uuid": "3061f36c-b614-4258-930b-de2e35dfc45b",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
