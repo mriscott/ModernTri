@@ -222,10 +222,17 @@ void deinit() {
   app_timer_cancel(display_timer);
   app_timer_cancel(hr_timer);
   app_timer_cancel(vibrate_timer);
+
+  // unsubscribe from services
 	tick_timer_service_unsubscribe();
 	bluetooth_connection_service_unsubscribe();
 	battery_state_service_unsubscribe();
 	accel_tap_service_unsubscribe();
+
+	// and destroy everything
+	layer_destroy(hands_layer);
+	gpath_destroy(minute_hand);
+	gpath_destroy(hour_hand);
 	bitmap_layer_destroy(battery_layer);
 	gbitmap_destroy(icon_battery_charging);
 	gbitmap_destroy(icon_battery_10);
@@ -241,15 +248,12 @@ void deinit() {
 	bitmap_layer_destroy(bt_layer);
 	gbitmap_destroy(icon_bt_connected);
 	gbitmap_destroy(icon_bt_disconnected);
+	text_layer_destroy(hr_layer);
+	text_layer_destroy(date_layer);
 	bitmap_layer_destroy(date_window_layer);
 	gbitmap_destroy(image_date_window);
-	text_layer_destroy(date_layer);
-	text_layer_destroy(hr_layer);
-	layer_destroy(hands_layer);
-	gpath_destroy(minute_hand);
-	gpath_destroy(hour_hand);
+	bitmap_layer_destroy(background_layer);
 	gbitmap_destroy(background_image);
-  	bitmap_layer_destroy(background_layer);
 	layer_destroy(window_layer);
   	window_destroy(window);
 }
