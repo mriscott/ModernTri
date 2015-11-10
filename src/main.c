@@ -63,6 +63,7 @@ static AppTimer *vibrate_timer;
 ///
 static bool badge = true;
 static bool hide_date = false;
+static bool vibe_on_disconnect = false;
 
 ///
 /// Draw Callbacks
@@ -217,9 +218,11 @@ void bt_vibrate(){
 void bt_connection_handler(bool bt) {
   bt_status = bt;
   draw_bt_icon();
-  app_timer_cancel(vibrate_timer);
-  if (!bt_status) vibrate_timer = app_timer_register(5000, bt_vibrate, NULL);
-  else if (bt_status && already_vibrated) already_vibrated = false;
+  if(vibe_on_disconnect) {
+    app_timer_cancel(vibrate_timer);
+    if (!bt_status) vibrate_timer = app_timer_register(5000, bt_vibrate, NULL);
+    else if (bt_status && already_vibrated) already_vibrated = false;
+  }
 }
 
 // Shake/Tap Handler. On shake/tap... call "show_status"
