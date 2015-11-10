@@ -26,6 +26,8 @@ static TextLayer *hr_layer;
 static char hr_count_text[] = "Count Beats";
 static char hr_ready_text[] = "Find Pulse";
 static char hr_cancelled_text[] = "Cancelled";
+static char hr_oneclick_text[] = "Shake again";
+
 // Status
 static bool status_showing = false;
 // Bluetooth
@@ -35,6 +37,7 @@ static GBitmap *icon_bt_disconnected;
 static bool bt_status = false;
 static bool already_vibrated = false;
 static bool hr_mode = false;
+static bool hr_one_shake = false;
 
 // Pebble Battery Icon
 static BitmapLayer *battery_layer;
@@ -157,8 +160,23 @@ void start_hr() {
   hr_timer = app_timer_register(30000, finish_hr, NULL);
 }
 
+void cancel_hr_shake() {
+  hr_one_shake=false;
+  if(!hr_mode) {
+    layer_set_hidden(text_layer_get_layer(hr_layer), true);
+  }
+}
+
 // Heart rate mode. Show text and wait for 5 secs
 void prepare_hr() {
+  if (hr_one_shake==false) {
+    hr_one_shake=true;
+    text_layer_set_text(hr_layer, hr_oneclick_text);
+    layer_set_hidden(text_layer_get_layer(hr_layer), false);
+    app_timer_register(2000, cancel_hr_shake, NULL);
+    return;
+  }
+    
   // Show text
   text_layer_set_text(hr_layer, hr_ready_text);
   layer_set_hidden(text_layer_get_layer(hr_layer), false);
@@ -228,17 +246,13 @@ void bt_connection_handler(bool bt) {
 // Shake/Tap Handler. On shake/tap... call "show_status"
 // also vibrate after 5s then again after 30 for checking pulse
 void tap_handler(AccelAxisType axis, int32_t direction) {
-  if(hr_mode) {
-    // cancel hr
-    text_layer_set_text(hr_layer, hr_cancelled_text);
-    app_timer_register(1000, hide_hr, NULL);
-		return;
-  }
+  
 	if(status_showing) {
     prepare_hr();
     return;
+  } else {
+    show_status();
   }
-  show_status();
   
 }
 // Time Update Handler. Set current time, redraw date (to update when changed not at 2359) and update hands layer
