@@ -64,9 +64,10 @@ static AppTimer *vibrate_timer;
 ///
 /// Easy set items for version management (and future settings screen)
 ///
-static bool badge = true;
-static bool hide_date = false;
-static bool vibe_on_disconnect = false;
+static bool config_badge = true;
+static bool config_hide_date = false;
+static bool config_vibe_on_disconnect = false;
+static bool config_hr_support = false;
 
 ///
 /// Draw Callbacks
@@ -194,8 +195,8 @@ void hide_status() {
   status_showing = false;
   draw_battery_icon();
   draw_bt_icon();
-  layer_set_hidden(text_layer_get_layer(date_layer), hide_date);
-  layer_set_hidden(bitmap_layer_get_layer(date_window_layer), hide_date);
+  layer_set_hidden(text_layer_get_layer(date_layer), config_hide_date);
+  layer_set_hidden(bitmap_layer_get_layer(date_window_layer), config_hide_date);
 }
 // Shows status icons. Call draw of default battery/bluetooth icons (which will show or hide icon based on set logic). Shows date/window.
 void show_status() {
@@ -236,7 +237,7 @@ void bt_vibrate(){
 void bt_connection_handler(bool bt) {
   bt_status = bt;
   draw_bt_icon();
-  if(vibe_on_disconnect) {
+  if(config_vibe_on_disconnect) {
     app_timer_cancel(vibrate_timer);
     if (!bt_status) vibrate_timer = app_timer_register(5000, bt_vibrate, NULL);
     else if (bt_status && already_vibrated) already_vibrated = false;
@@ -246,12 +247,11 @@ void bt_connection_handler(bool bt) {
 // Shake/Tap Handler. On shake/tap... call "show_status"
 // also vibrate after 5s then again after 30 for checking pulse
 void tap_handler(AccelAxisType axis, int32_t direction) {
-  
-	if(status_showing) {
-    prepare_hr();
-    return;
-  } else {
+  if (!status_showing) {
     show_status();
+  }
+  else if (config_hr_support) {
+    prepare_hr();
   }
   
 }
@@ -320,7 +320,7 @@ void init() {
   const GPoint center = grect_center_point(&window_bounds);
   
   // Background image init and draw
-  if (badge) background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BADGE);
+  if (config_badge) background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BADGE);
   else background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_NOBADGE);
   background_layer = bitmap_layer_create(window_bounds);
   bitmap_layer_set_alignment(background_layer, GAlignCenter);
@@ -336,7 +336,7 @@ void init() {
   date_window_layer = bitmap_layer_create(GRect(117,75,27,21));
   layer_add_child(window_layer, bitmap_layer_get_layer(date_window_layer));
   bitmap_layer_set_bitmap(date_window_layer, image_date_window);
-  layer_set_hidden(bitmap_layer_get_layer(date_window_layer), hide_date);
+  layer_set_hidden(bitmap_layer_get_layer(date_window_layer), config_hide_date);
       
   // Date text init, then call "draw_date"
   date_layer = text_layer_create(GRect(119, 72, 30, 30));
@@ -345,7 +345,7 @@ void init() {
   text_layer_set_background_color(date_layer, GColorClear);
   text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
-  layer_set_hidden(text_layer_get_layer(date_layer), hide_date);
+  layer_set_hidden(text_layer_get_layer(date_layer), config_hide_date);
   draw_date();
   
     // hr text init
