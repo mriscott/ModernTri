@@ -63,10 +63,18 @@ static AppTimer *hr_ready_timer;
 static AppTimer *vibrate_timer;
 ///
 /// Easy set items for version management (and future settings screen)
-///
-static bool config_badge = true;
+//
+
+// If false, hide the backgroud tri images
+static bool config_background = true;
+
+// If true, hide date when BT and battery status hidden
 static bool config_hide_date = false;
+
+// Vibe on BY disconnect
 static bool config_vibe_on_disconnect = false;
+
+// support for HR measuring 
 static bool config_hr_support = false;
 
 ///
@@ -320,7 +328,7 @@ void init() {
   const GPoint center = grect_center_point(&window_bounds);
   
   // Background image init and draw
-  if (config_badge) background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BADGE);
+  if (config_background) background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BADGE);
   else background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_NOBADGE);
   background_layer = bitmap_layer_create(window_bounds);
   bitmap_layer_set_alignment(background_layer, GAlignCenter);
