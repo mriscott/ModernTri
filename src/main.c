@@ -38,6 +38,7 @@ static bool bt_status = false;
 static bool already_vibrated = false;
 static bool hr_mode = false;
 static bool hr_one_shake = false;
+static bool hr_measured = false;
 
 // Pebble Battery Icon
 static BitmapLayer *battery_layer;
@@ -76,6 +77,9 @@ static bool config_vibe_on_disconnect = false;
 
 // support for HR measuring 
 static bool config_hr_support = true;
+
+// only allow one hr measure in life of watchface
+static bool config_hr_only_once = true;
 
 // require double shake to enter hr mode
 static bool config_hr_double_shake = false;
@@ -156,6 +160,7 @@ void hide_hr() {
 }
 
 void finish_hr() {
+ hr_measured=true;
  long_pulse();
  hide_hr();
 }
@@ -181,6 +186,9 @@ void cancel_hr_shake() {
 
 // Heart rate mode. Show text and wait for 5 secs
 void prepare_hr() {
+  if (config_hr_only_once && hr_measured) {
+    return;
+  }
   if (config_hr_double_shake  && !hr_one_shake) {
     hr_one_shake=true;
     text_layer_set_text(hr_layer, hr_oneclick_text);
@@ -329,7 +337,10 @@ void init() {
   window_layer = window_get_root_layer(window);
   window_bounds = layer_get_bounds(window_layer);
   const GPoint center = grect_center_point(&window_bounds);
-  
+ 
+  // set hr as not yet measured
+  hr_measured = false;
+ 
   // Background image init and draw
   if (config_background) background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_BADGE);
   else background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND_NOBADGE);
