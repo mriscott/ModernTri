@@ -75,7 +75,7 @@ static bool config_hide_date = false;
 static bool config_vibe_on_disconnect = false;
 
 // support for HR measuring 
-static bool config_hr_support = false;
+static bool config_hr_support = true;
 
 // require double shake to enter hr mode
 static bool config_hr_double_shake = false;
@@ -181,7 +181,7 @@ void cancel_hr_shake() {
 
 // Heart rate mode. Show text and wait for 5 secs
 void prepare_hr() {
-  if (!config_hr_double_shake ||!hr_one_shake) {
+  if (config_hr_double_shake  && !hr_one_shake) {
     hr_one_shake=true;
     text_layer_set_text(hr_layer, hr_oneclick_text);
     layer_set_hidden(text_layer_get_layer(hr_layer), false);
