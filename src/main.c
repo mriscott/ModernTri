@@ -77,6 +77,9 @@ static bool config_vibe_on_disconnect = false;
 // support for HR measuring 
 static bool config_hr_support = false;
 
+// require double shake to enter hr mode
+static bool config_hr_double_shake = false;
+
 ///
 /// Draw Callbacks
 ///
@@ -178,7 +181,7 @@ void cancel_hr_shake() {
 
 // Heart rate mode. Show text and wait for 5 secs
 void prepare_hr() {
-  if (hr_one_shake==false) {
+  if (!config_hr_double_shake ||!hr_one_shake) {
     hr_one_shake=true;
     text_layer_set_text(hr_layer, hr_oneclick_text);
     layer_set_hidden(text_layer_get_layer(hr_layer), false);
@@ -253,7 +256,7 @@ void bt_connection_handler(bool bt) {
 }
 
 // Shake/Tap Handler. On shake/tap... call "show_status"
-// also vibrate after 5s then again after 30 for checking pulse
+// On second shake (while status showing), move to HR mode if supported
 void tap_handler(AccelAxisType axis, int32_t direction) {
   if (!status_showing) {
     show_status();
