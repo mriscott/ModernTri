@@ -276,7 +276,9 @@ void tap_handler(AccelAxisType axis, int32_t direction) {
 }
 // Time Update Handler. Set current time, redraw date (to update when changed not at 2359) and update hands layer
 void update_time(struct tm *t, TimeUnits units_changed) {
-  current_time = t;
+  // using the tm supplied seems to always give approx 10.30 - this gives correct time
+  time_t temp = time(NULL);
+  current_time = localtime(&temp);
   layer_mark_dirty(hands_layer);
   draw_date();
 }

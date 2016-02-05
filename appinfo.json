@@ -5,17 +5,12 @@
     "capabilities": [
         ""
     ],
-    "companyName": "JWay5929",
+    "companyName": "IronGeek",
+    "enableMultiJS": false,
     "longName": "Modern Tri",
     "projectType": "native",
     "resources": {
         "media": [
-            {
-                "file": "images/modern_logo.png",
-                "menuIcon": true,
-                "name": "IMAGE_MENU_ICON",
-                "type": "png"
-            },
             {
                 "file": "images/modern_background_new.png",
                 "name": "IMAGE_BACKGROUND_BADGE",
@@ -24,6 +19,12 @@
             {
                 "file": "images/modern minimal 3 background no badge.png",
                 "name": "IMAGE_BACKGROUND_NOBADGE",
+                "type": "png"
+            },
+            {
+                "file": "images/modern_logo.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENU_ICON",
                 "type": "png"
             },
             {
@@ -103,11 +104,15 @@
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "Modern Tri",
+    "targetPlatforms": [
+        "aplite",
+        "basalt",
+        "chalk"
+    ],
     "uuid": "3061f36c-b614-4258-930b-de2e35dfc45b",
-    "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.2",
     "watchapp": {
         "watchface": true
     }
